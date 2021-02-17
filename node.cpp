@@ -22,6 +22,22 @@ FileSystemNode::FileSystemNode(const directory_entry& e, FileSystemNode* p, int 
     fpath(e.path()),
     loaded(!isDirectory())
 {
+    name = fpath.filename().c_str();
+    ext = fpath.extension().c_str();
+    if (name.isEmpty())
+    {
+        name = ext;
+        ext.clear();
+    }
+    else
+        name = name.left(name.count() - ext.count());
+
+    if(isDirectory())
+        ext = "<DIR>";
+
+    if(ext[0] == '.')
+        ext = ext.mid(1);
+
     enum {ICON_SIZE = 20};
     QPixmap pm(ICON_SIZE, ICON_SIZE);
     pm.fill(Qt::transparent);
@@ -34,19 +50,24 @@ FileSystemNode::FileSystemNode(const directory_entry& e, FileSystemNode* p, int 
     QColor bgColor = isDirectory() ? QColor(0x21, 0x96, 0xf3) : QColor(0x4c, 0xaf, 0x50);
     painter.fillPath(path, bgColor);
 
-    const std::string name = fpath.filename().string();
-    if (!name.empty())
+    if (!name.isEmpty())
     {
-        QFont f = painter.font();
-        if(isDirectory())
-            f.setBold(true);
-        else
-            f.setItalic(true);
-        painter.setFont(f);
+        QString n = name;
+        n = n.remove('.');
 
-        QString ch(name[0]);
-        painter.setPen(Qt::white);
-        painter.drawText(QRect(0, 0, ICON_SIZE, ICON_SIZE), Qt::AlignCenter, ch.toUpper());
+        if (!n.isEmpty())
+        {
+            QString ch(n[0]);
+            QFont f = painter.font();
+            if(isDirectory())
+                f.setBold(true);
+            else
+                f.setItalic(true);
+            painter.setFont(f);
+
+            painter.setPen(Qt::white);
+            painter.drawText(QRect(0, 0, ICON_SIZE, ICON_SIZE), Qt::AlignCenter, ch); //ch.toUpper());
+        }
     }
     painter.end();
 
@@ -101,12 +122,10 @@ QVariant FileSystemNode::data(int column, int role) const
     switch(column)
     {
     case COLUMN_NAME:
-        return QString(fpath.filename().c_str());
+        return name;
 
     case COLUMN_EXT:
-        if(isDirectory())
-            return "<DIR>";
-        return QString(fpath.extension().c_str());
+        return ext;
 
     case COLUMN_SIZE:
         if(isDirectory())

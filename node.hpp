@@ -50,6 +50,8 @@ private:
     bool                     loaded;
     QIcon                    icon;
     FileSystemNodeLoader*    loader = nullptr;
+    QString                  name;
+    QString                  ext;
 
     FileSystemNode(const directory_entry& e, FileSystemNode* p = nullptr, int idx = 0);
 
@@ -60,9 +62,6 @@ class FileSystemNodeLoader
 {
 public:
     FileSystemNodeLoader(FileSystemNode* n);
-
-    int count() const;
-    void operator()();
 
     void wait();
 
