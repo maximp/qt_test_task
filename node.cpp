@@ -110,7 +110,7 @@ QVariant FileSystemNode::data(int column, int role) const
 
     case COLUMN_SIZE:
         if(isDirectory())
-            return 0;
+            return {};
 
         return (qlonglong)std::filesystem::file_size(fpath);
     }
