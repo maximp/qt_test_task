@@ -48,6 +48,8 @@ Tree::Tree(QWidget* parent)
 
     for (int column = 0; column < model.columnCount(); ++column)
         resizeColumnToContents(column);
+
+    setEditTriggers(EditTrigger::DoubleClicked);
 }
 
 void Tree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)

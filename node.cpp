@@ -38,6 +38,19 @@ FileSystemNode::FileSystemNode(const directory_entry& e, FileSystemNode* p, int 
     if(ext[0] == '.')
         ext = ext.mid(1);
 
+    icon = makeIcon();
+}
+
+FileSystemNode::~FileSystemNode()
+{
+    if(loader)
+        loader->wait();
+    loader = nullptr;
+    qDeleteAll(children);
+}
+
+QIcon FileSystemNode::makeIcon() const
+{
     enum {ICON_SIZE = 20};
     QPixmap pm(ICON_SIZE, ICON_SIZE);
     pm.fill(Qt::transparent);
@@ -71,15 +84,7 @@ FileSystemNode::FileSystemNode(const directory_entry& e, FileSystemNode* p, int 
     }
     painter.end();
 
-    icon = pm;
-}
-
-FileSystemNode::~FileSystemNode()
-{
-    if(loader)
-        loader->wait();
-    loader = nullptr;
-    qDeleteAll(children);
+    return pm;
 }
 
 Qt::ItemFlags FileSystemNode::flags() const
@@ -111,9 +116,12 @@ FileSystemNode* FileSystemNode::child(int row) const
 
 QVariant FileSystemNode::data(int column, int role) const
 {
-    if (role != Qt::DisplayRole)
+    if (role != Qt::DisplayRole && role != Qt::EditRole)
     {
-        if (column == 0 && role == Qt::DecorationRole)
+        if (column != 0)
+            return {};
+
+        if (role == Qt::DecorationRole)
             return icon;
 
         return {};
@@ -135,6 +143,48 @@ QVariant FileSystemNode::data(int column, int role) const
     }
 
     return {};
+}
+
+bool FileSystemNode::setData(int column, const QVariant &value)
+{
+    const QString s = value.toString();
+    QString nname = name, next = ext;
+    switch(column)
+    {
+    case COLUMN_NAME:
+        if(s == name)
+            return false;
+        nname = s;
+        break;
+
+    case COLUMN_EXT:
+        if(s == ext || isDirectory())
+            return false;
+        next = s;
+        break;
+
+    default:
+        return false;
+    }
+
+    QString fname = nname;
+    if (!next.isEmpty() && !isDirectory())
+        fname += "." + next;
+
+    path npath = fpath;
+    npath.replace_filename(fname.toStdString());
+
+    std::error_code ec;
+    std::filesystem::rename(fpath, npath, ec);
+    if(ec)
+        return false;
+
+    fpath = npath;
+    name = nname;
+    ext = next;
+    icon = makeIcon();
+
+    return true;
 }
 
 FileSystemNodeLoader* FileSystemNode::startLoad()

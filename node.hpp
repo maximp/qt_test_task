@@ -31,6 +31,7 @@ public:
     FileSystemNode* parent() const { return parentNode; }
     int row() const { return parentIndex; }
     QVariant data(int column, int role) const;
+    bool setData(int column, const QVariant &value);
 
     bool isDirectory() const { return ftype == file_type::directory; }
     bool isLoaded() const { return loaded; }
@@ -54,6 +55,8 @@ private:
     QString                  ext;
 
     FileSystemNode(const directory_entry& e, FileSystemNode* p = nullptr, int idx = 0);
+
+    QIcon makeIcon() const;
 
     friend class FileSystemNodeLoader;
 };

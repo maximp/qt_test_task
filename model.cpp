@@ -22,8 +22,15 @@ Qt::ItemFlags FileSystemModel::flags(const QModelIndex &index) const
         return Qt::NoItemFlags;
 
     FileSystemNode* n = node(index);
+    Qt::ItemFlags f = n->flags() | QAbstractItemModel::flags(index);
 
-    return n->flags() | QAbstractItemModel::flags(index);
+    if(index.column() == FileSystemNode::COLUMN_NAME)
+        f |= Qt::ItemIsEditable;
+
+    if(index.column() == FileSystemNode::COLUMN_EXT && !n->isDirectory())
+        f |= Qt::ItemIsEditable;
+
+    return f;
 }
 
 QVariant FileSystemModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -87,6 +94,20 @@ QVariant FileSystemModel::data(const QModelIndex &index, int role) const
     FileSystemNode* n = node(index);
 
     return n->data(index.column(), role);
+}
+
+bool FileSystemModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role != Qt::EditRole)
+        return false;
+
+    FileSystemNode* n = node(index);
+    bool result = n->setData(index.column(), value);
+
+    if (result)
+        emit dataChanged(index, index);
+
+    return result;
 }
 
 bool FileSystemModel::canFetchMore(const QModelIndex &parent) const
