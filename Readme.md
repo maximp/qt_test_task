@@ -5,8 +5,8 @@ Write an application that displays the file system structure using QTreeView.
 
 QTreeView widget should have 3 columns:
 - Element name
-- File extension (empty for the folder)
-- File size (for the folder the constant '<DIR>')
+- File extension (for the folder the constant '&lt;DIR&gt;')
+- File size (empty for the folder)
 
 Element name should be accompanied by an icon in the form of a square, filled with a single letter.
 The first letter of the element name is used as the letter.
