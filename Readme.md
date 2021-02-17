@@ -26,4 +26,4 @@ The model must be inherited from the QAbstractItemModel.
 An input field must be provided to filter the display by element name.
 
 
-![alt text](https://github.com/maperen/qt_test_task/blob/master/screenshot.png?raw=true)
+![Screenshot](https://github.com/maximp/qt_test_task/blob/master/screenshot.png?raw=true)
