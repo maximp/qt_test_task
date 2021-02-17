@@ -92,7 +92,6 @@ Qt::ItemFlags FileSystemNode::flags() const
     Qt::ItemFlags f = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     if(!isDirectory())
         f |= Qt::ItemNeverHasChildren;
-    else f |= Qt::ItemIsUserTristate;
     return f;
 }
 
