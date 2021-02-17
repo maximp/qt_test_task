@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Debug",
             "type": "cppdbg",
@@ -12,6 +11,25 @@
             "program": "${workspaceFolder}/_debug/qt-test",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/_debug",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/bin/gdb"
+        },
+        {
+            "name": "Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/_release/qt-test",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/_release",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

@@ -204,7 +204,9 @@ bool FileSystemNode::removeRows(int row, int count)
         c->remove();
         delete c;
     }
+
     children.remove(row, count);
+
     return true;
 }
 
@@ -229,22 +231,29 @@ void FileSystemNodeLoader::run()
     namespace fs = std::filesystem;
 
     QVector<directory_entry> dirs, files;
-    for(const fs::directory_entry& e: fs::directory_iterator(node->fpath))
+    try
     {
-        const fs::path& p = e.path();
-        (void)p;
-        const fs::file_type t = e.status().type();
-        switch(t)
+        for(const fs::directory_entry& e: fs::directory_iterator(node->fpath))
         {
-        case fs::file_type::regular:
-            files.append(e);
-            break;
-        case fs::file_type::directory:
-            dirs.append(e);
-            break;
-        default:
-            break;
+            const fs::path& p = e.path();
+            (void)p;
+            const fs::file_type t = e.status().type();
+            switch(t)
+            {
+            case fs::file_type::regular:
+                files.append(e);
+                break;
+            case fs::file_type::directory:
+                dirs.append(e);
+                break;
+            default:
+                break;
+            }
         }
+    }
+    catch(const std::exception& e)
+    {
+        qDebug() << "Exception: " << e.what();
     }
 
     entries.append(dirs);

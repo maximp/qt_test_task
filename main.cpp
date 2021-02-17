@@ -63,7 +63,8 @@ Tree::Tree(QLineEdit* filter, QWidget* parent)
 void Tree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     QTreeView::selectionChanged(selected, deselected);
-    for(const auto& m : selected.indexes())
+    QItemSelection mapped = filterModel.mapSelectionToSource(selected);
+    for(const auto& m : mapped.indexes())
         fsModel.load(m);
 }
 

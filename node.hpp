@@ -3,7 +3,6 @@
 #include <QAbstractItemModel>
 #include <QIcon>
 
-#include <atomic>
 #include <filesystem>
 #include <thread>
 

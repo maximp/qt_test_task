@@ -66,6 +66,9 @@ QModelIndex FileSystemModel::parent(const QModelIndex &child) const
         return {};
 
     FileSystemNode* childNode = node(child);
+    if(!childNode)
+        return {};
+
     FileSystemNode* parentNode = childNode->parent();
 
     if (parentNode == root)
@@ -77,12 +80,18 @@ QModelIndex FileSystemModel::parent(const QModelIndex &child) const
 int FileSystemModel::rowCount(const QModelIndex &parent) const
 {
     FileSystemNode* n = parent.isValid() ? node(parent) : root;
+    if(!n)
+        return 0;
+
     return n->count();
 }
 
 int FileSystemModel::columnCount(const QModelIndex &parent) const
 {
     FileSystemNode* n = parent.isValid() ? node(parent) : root;
+    if(!n)
+        return 0;
+
     return n->columnCount();
 }
 
@@ -92,6 +101,8 @@ QVariant FileSystemModel::data(const QModelIndex &index, int role) const
         return {};
 
     FileSystemNode* n = node(index);
+    if(!n)
+        return {};
 
     return n->data(index.column(), role);
 }
@@ -102,6 +113,9 @@ bool FileSystemModel::setData(const QModelIndex &index, const QVariant &value, i
         return false;
 
     FileSystemNode* n = node(index);
+    if(!n)
+        return false;
+
     bool result = n->setData(index.column(), value);
 
     if (result)
@@ -116,6 +130,8 @@ bool FileSystemModel::canFetchMore(const QModelIndex &parent) const
         return false;
 
     FileSystemNode* n = node(parent);
+    if(!n)
+        return false;
 
     return !n->isLoaded();
 }
@@ -126,6 +142,9 @@ void FileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     FileSystemNode* n = node(parent);
+    if(!n)
+        return;
+
     FileSystemNodeLoader* loader = n->startLoad();
     loader->wait();
 
@@ -142,6 +161,8 @@ bool FileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
         return false;
 
     FileSystemNode* n = parent.isValid() ? node(parent) : root;
+    if(!n)
+        return false;
 
     beginRemoveRows(parent, row, row + count - 1);
     bool result = n->removeRows(row, count);
@@ -156,6 +177,8 @@ void FileSystemModel::load(const QModelIndex& parent)
         return;
 
     FileSystemNode* n = node(parent);
+    if(!n)
+        return;
 
     if(!n->isLoaded())
         n->startLoad();
