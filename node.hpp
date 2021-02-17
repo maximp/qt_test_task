@@ -38,6 +38,8 @@ public:
 
     FileSystemNodeLoader* startLoad();
 
+    bool removeRows(int row, int count);
+
 private:
     using file_type = std::filesystem::file_type;
     using directory_entry = std::filesystem::directory_entry;
@@ -57,6 +59,7 @@ private:
     FileSystemNode(const directory_entry& e, FileSystemNode* p = nullptr, int idx = 0);
 
     QIcon makeIcon() const;
+    void remove();
 
     friend class FileSystemNodeLoader;
 };

@@ -136,6 +136,20 @@ void FileSystemModel::fetchMore(const QModelIndex &parent)
     }
 }
 
+bool FileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if(count <= 0)
+        return false;
+
+    FileSystemNode* n = parent.isValid() ? node(parent) : root;
+
+    beginRemoveRows(parent, row, row + count - 1);
+    bool result = n->removeRows(row, count);
+    endRemoveRows();
+
+    return result;
+}
+
 void FileSystemModel::load(const QModelIndex& parent)
 {
     if (!parent.isValid())

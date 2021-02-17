@@ -25,6 +25,8 @@ public:
     bool canFetchMore(const QModelIndex &parent) const override;
     virtual void fetchMore(const QModelIndex &parent) override;
 
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+
     void load(const QModelIndex& parent);
 
 private:

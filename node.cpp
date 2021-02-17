@@ -194,6 +194,28 @@ FileSystemNodeLoader* FileSystemNode::startLoad()
     return loader;
 }
 
+bool FileSystemNode::removeRows(int row, int count)
+{
+    if(row < 0 || row + count > children.count())
+        return false;
+
+    for(int i = row; i < row + count; ++i)
+    {
+        FileSystemNode* c = children[i];
+        c->remove();
+        delete c;
+    }
+    children.remove(row, count);
+    return true;
+}
+
+void FileSystemNode::remove()
+{
+    // errors must be handled
+    std::error_code ec;
+    std::filesystem::remove_all(fpath, ec);
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 FileSystemNodeLoader::FileSystemNodeLoader(FileSystemNode* n)

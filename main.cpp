@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QVBoxLayout>
 #include <QLineEdit>
+#include <QKeyEvent>
 
 #include "model.hpp"
 
@@ -14,9 +15,10 @@ public:
 
 protected:
     virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    FileSystemModel model;
+    FileSystemModel fsModel;
 };
 
 int main(int argc, char *argv[])
@@ -44,9 +46,9 @@ int main(int argc, char *argv[])
 Tree::Tree(QWidget* parent)
 :   QTreeView(parent)
 {
-    setModel(&model);
+    setModel(&fsModel);
 
-    for (int column = 0; column < model.columnCount(); ++column)
+    for (int column = 0; column < fsModel.columnCount(); ++column)
         resizeColumnToContents(column);
 
     setEditTriggers(EditTrigger::DoubleClicked);
@@ -56,5 +58,16 @@ void Tree::selectionChanged(const QItemSelection &selected, const QItemSelection
 {
     QTreeView::selectionChanged(selected, deselected);
     for(const auto& m : selected.indexes())
-        model.load(m);
+        fsModel.load(m);
+}
+
+void Tree::keyPressEvent(QKeyEvent *event)
+{
+    QTreeView::keyPressEvent(event);
+    if(event->key() == Qt::Key_Delete)
+    {
+        const QModelIndex index = selectionModel()->currentIndex();
+        QAbstractItemModel* m = model();
+        m->removeRow(index.row(), index.parent());
+    }
 }
