@@ -129,11 +129,11 @@ void FileSystemModel::fetchMore(const QModelIndex &parent)
     FileSystemNodeLoader* loader = n->startLoad();
     loader->wait();
 
-    if(n->count() > 0)
-    {
-        beginInsertRows(parent, 0, n->count() - 1);
-        endInsertRows();
-    }
+    // this code damages view layout when using with QSortFilterProxyModel
+    // at some cases
+    //
+    //beginInsertRows(parent, 0, n->count() - 1);
+    //endInsertRows();
 }
 
 bool FileSystemModel::removeRows(int row, int count, const QModelIndex &parent)

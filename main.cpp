@@ -5,13 +5,14 @@
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QKeyEvent>
+#include <QSortFilterProxyModel>
 
 #include "model.hpp"
 
 class Tree : public QTreeView
 {
 public:
-    Tree(QWidget* parent = nullptr);
+    Tree(QLineEdit* filter, QWidget* parent = nullptr);
 
 protected:
     virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
@@ -19,6 +20,7 @@ protected:
 
 private:
     FileSystemModel fsModel;
+    QSortFilterProxyModel filterModel;
 };
 
 int main(int argc, char *argv[])
@@ -33,7 +35,7 @@ int main(int argc, char *argv[])
     QLineEdit filter;
     vbox->addWidget(&filter);
 
-    Tree view;
+    Tree view(&filter);
     vbox->addWidget(&view);
 
     main.setCentralWidget(&central);
@@ -43,10 +45,14 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-Tree::Tree(QWidget* parent)
+Tree::Tree(QLineEdit* filter, QWidget* parent)
 :   QTreeView(parent)
 {
-    setModel(&fsModel);
+    filterModel.setSourceModel(&fsModel);
+    setModel(&filterModel);
+
+    QObject::connect(filter, &QLineEdit::textChanged,
+        &filterModel, &QSortFilterProxyModel::setFilterWildcard);
 
     for (int column = 0; column < fsModel.columnCount(); ++column)
         resizeColumnToContents(column);
