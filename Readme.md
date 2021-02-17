@@ -25,7 +25,16 @@ The model must be inherited from the QAbstractItemModel.
 
 An input field must be provided to filter the display by element name.
 
+### Building
+
+**cmake** and **Qt5** must be installed.
+
+    make
+
+Tested only on Linux platform.
+
+### Screenshots
+
 ![Screenshot](https://github.com/maximp/qt_test_task/blob/master/screenshot.png?raw=true)
 
-Screen with filtering:
 ![Screenshot](https://github.com/maximp/qt_test_task/blob/master/screenshot2.png?raw=true)
